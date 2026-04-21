@@ -28,8 +28,8 @@ def run_single_method(ber_key, method, **kwargs):
 
 
 def compute_ber_multiprocessing(use_ml_hard: bool = False, use_ml_fec_hard: bool = False, use_ml_fec_soft: bool = False,
-                 use_zf_hard: bool = False, use_zf_fec_hard: bool = False, use_zf_fec_soft: bool = False,
-                 use_mmse_hard: bool = False, use_mmse_fec_hard: bool = False, use_mmse_fec_soft: bool = False,
+                                use_zf_hard: bool = False, use_zf_fec_hard: bool = False, use_zf_fec_soft: bool = False,
+                                use_mmse_hard: bool = False, use_mmse_fec_hard: bool = False, use_mmse_fec_soft: bool = False,
                                 signal_noise_ratio: int = None,
                                 Nt: int = None, Nr: int = None, size_of_modulation: int = None,
                                 use_awgn: bool = None, use_rayleigh_fading_with_mp: bool = None) -> dict:
