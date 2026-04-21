@@ -27,8 +27,6 @@ if __name__ == '__main__':
     }
 
     zf_metrics = np.zeros((num_of_iter, len(SNR_arr), 3))
-    mmse_metrics = np.zeros((num_of_iter, len(SNR_arr), 3))
-    ml_metrics = np.zeros((num_of_iter, len(SNR_arr), 3))
 
     for i in range(num_of_iter):
         print(f'Итерация {i + 1}')
@@ -45,28 +43,13 @@ if __name__ == '__main__':
                 **decision_methods
             )
 
-            ml_metrics[i, s] = [
-                ber_results['ber_ml_fec_soft'],
-                ber_results['ber_ml_fec_hard'],
-                ber_results['ber_ml_hard']
+            zf_metrics[i, s] = [
+                ber_results['ber_zf_fec_soft'],
+                ber_results['ber_zf_fec_hard'],
+                ber_results['ber_zf_hard']
             ]
 
-            if num_of_tr <= num_of_rec:
-                zf_metrics[i, s] = [
-                    ber_results['ber_zf_fec_soft'],
-                    ber_results['ber_zf_fec_hard'],
-                    ber_results['ber_zf_hard']
-                ]
-
-                mmse_metrics[i, s] = [
-                    ber_results['ber_mmse_fec_soft'],
-                    ber_results['ber_mmse_fec_hard'],
-                    ber_results['ber_mmse_hard']
-                ]
-
     zf_metrics = np.mean(zf_metrics, axis=0)
-    ml_metrics = np.mean(ml_metrics, axis=0)
-    mmse_metrics = np.mean(mmse_metrics, axis=0)
 
     SNR_arr_without_enc = np.load('ber my vs bertool/bertool/snr.npy')
     ber_th_without_enc = np.load('ber my vs bertool/bertool/ber.npy',)
