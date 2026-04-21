@@ -13,7 +13,7 @@ if __name__=='__main__':
     num_of_tr = 2
     num_of_rec = 2
 
-    SNR_arr = np.arange(0, 30, 2)
+    SNR_arr = np.arange(0, 20, 2)
 
     num_of_iter = 1
 
@@ -149,4 +149,4 @@ if __name__=='__main__':
     ax4.set_ylim(1e-5, 1)
     ax4.legend()
     ax4.grid()
-    plt.savefig(f'ber & evm/BER vs SNR All methods.png')
+    plt.savefig(f'ber/BER vs SNR All methods.png')

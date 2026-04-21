@@ -166,8 +166,6 @@ class OFDMMIMOTransceiver:
         Моделирование MIMO-OFDM передатчика и приёмника.
         Args:
             input_signal_f: Исходный информационный сигнал.
-        Returns:
-            None
         """
         self.number_of_OFDM_symbols = input_signal_f.shape[0] // self.number_of_subcarriers
 
@@ -259,7 +257,7 @@ class DataProcessing(OFDMMIMOTransceiver, QAMModemAdapter):
     """
     Класс обработки данных с поддержкой ZF, MMSE эквалайзеров, ML детекции, помехоустойчивого кодирования,
     разных типов решений: жёсткие решения без помехоустойчивого кодирования,
-    жёсткие и мягкие решения при помехоустойчивом кодированием.
+    жёсткие и мягкие решения с помехоустойчивым кодированием.
 
     Наследуется от:
         - OFDMMIMOTransceiver: обеспечивает OFDM-модуляцию/демодуляцию и моделирование канала
@@ -356,7 +354,7 @@ class DataProcessing(OFDMMIMOTransceiver, QAMModemAdapter):
         Вычисление матрицы мягких решений (Log-Likelihood Ratio) для принятого сигнала.
         Args:
             entire_signal: Принятый сигнал.
-            ml_flag: Флаг для сигнала, принятого при помощи Maximum Likelihood (ML) эквалайзера.
+            ml_flag: Флаг для сигнала, принятого при помощи Maximum Likelihood (ML) детектора.
         Returns:
             Матрица мягких решений.
         """
