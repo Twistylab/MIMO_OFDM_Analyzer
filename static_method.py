@@ -6,7 +6,8 @@ def rayleigh_impulse_response():
     Создаёт импульсную характеристику для канала
     по типу Рэлеевского замирания с многолучевым распространением,
     где модули лучей ИХ распределены по Рэлею, а фаза равномерная.
-    :return: Импульсная характеристика.
+    Returns:
+        Импульсная характеристика.
     """
     # Мощность лучей в дБ
     power_dB = np.asarray([0, -8, -17, -21, -25])
@@ -22,8 +23,10 @@ def rayleigh_impulse_response():
 def dft(polynomial):
     """
     Реализует прямое дискретное преобразование Фурье.
-    :param polynomial: Вектор, подлежащий преобразованию, из коэффициентов полинома.
-    :return: Преобразованный вектор из коэффициентов полинома.
+    Args:
+        polynomial: Вектор из коэффициентов полинома, подлежащий преобразованию.
+    Returns:
+        Преобразованный вектор из коэффициентов полинома.
     """
     P = np.asarray(polynomial, dtype='complex')
     N = len(P)
@@ -37,8 +40,10 @@ def dft(polynomial):
 def idft(polynomial):
     """
     Реализует обратное дискретное преобразование Фурье.
-    :param polynomial: Вектор, подлежащий преобразованию, из коэффициентов полинома.
-    :return: Преобразованный вектор из коэффициентов полинома.
+    Args:
+        polynomial: Вектор из коэффициентов полинома, подлежащий преобразованию.
+    Returns:
+        Преобразованный вектор из коэффициентов полинома.
     """
     P = np.asarray(polynomial, dtype='complex')
     N = len(P)
@@ -52,11 +57,14 @@ def idft(polynomial):
 def fft(polynomial):
     """
     Реализует прямое быстрое преобразование Фурье.
-    :param polynomial: Вектор, подлежащий преобразованию,
-    из коэффициентов полинома, число которых равно степени двойки.
-    :return: Преобразованный вектор из коэффициентов полинома.
+    Args:
+        polynomial: Вектор из коэффициентов полинома, подлежащий преобразованию.
+    Returns:
+        Преобразованный вектор из коэффициентов полинома.
+    Raises:
+            ValueError: Длина полинома не является степенью двойки.
     """
-    if len(polynomial) & (len(polynomial) > 1) != 0 or len(polynomial) == 0:
+    if (len(polynomial) & (len(polynomial) - 1) != 0) or (len(polynomial) == 0):
         raise ValueError(f"Длина полинома ({len(polynomial)}) не является степенью двойки")
     polynomial = np.asarray(polynomial, dtype='complex')
     def _fft(P):
@@ -77,11 +85,14 @@ def fft(polynomial):
 def ifft(polynomial):
     """
     Реализует обратное быстрое преобразование Фурье.
-    :param polynomial: Вектор, подлежащий преобразованию,
-    из коэффициентов полинома, число которых равно степени двойки.
-    :return: Преобразованный вектор из коэффициентов полинома.
+    Args:
+        polynomial: Вектор из коэффициентов полинома, подлежащий преобразованию.
+    Returns:
+        Преобразованный вектор из коэффициентов полинома.
+    Raises:
+            ValueError: Длина полинома не является степенью двойки.
     """
-    if len(polynomial) & (len(polynomial) > 1) != 0 or len(polynomial) == 0:
+    if (len(polynomial) & (len(polynomial) - 1) != 0) or (len(polynomial) == 0):
         raise ValueError(f"Длина полинома ({len(polynomial)}) не является степенью двойки")
     polynomial = np.asarray(polynomial, dtype='complex')
     def _ifft(P):
