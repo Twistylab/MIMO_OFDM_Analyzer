@@ -28,6 +28,7 @@
 
 ```text
 .
+├── DFE_LMS.ipynb
 ├── DFE.ipynb
 ├── main.py
 ├── verif.py
@@ -123,23 +124,53 @@
 13. Hard / soft Viterbi decoding
 14. Подсчёт **BER**
 
+## Decision Feedback Equalization (DFE)
+
+Включает в себя реализацию эквалайзера с обратной связью при принятии решения (**DFE**) для одноканальных систем.
+
 ### `DFE.ipynb`
-Ноутбук с собственной реализацией Decision Feedback Equalizer (**DFE**) для одноканальной системы передачи.
 
-Содержит:
+**DFE** с фиксированными весами:
 
-- генерацию случайной битовой последовательности;
-- QAM-модуляцию (`M = 16`);
-- модель канала с:
-  - многолучевым распространением;
-  - экспоненциальным затуханием коэффициентов;
-  - добавлением АБГШ;
-- реализацию эквалайзера:
-  - Feed-Forward Filter (**FFF**) (Zero-Forcing);
-  - Feed-Back Filter (**FBF**);
-  - восстановление переданных символов.
+* Feed-Forward Filter (**FFF**) (Zero-Forcing);
+* Feed-Back Filter (**FBF**);
+
+### `DFE_LMS.ipynb`
+
+Адаптивный DFE на основе алгоритма **Least Mean Squares (LMS)** из книги
+_"Digital Communications and Signal Processing" by K Vasudevan, section 5.1.8_:
+
+* веса фильтров эквалайзера адаптируются с помощью алгоритма **LMS**;
+* обучение выполняется на известной обучающей последовательности;
+* шаг адаптации ($\mu$) выбирается исходя из условия устойчивости алгоритма **LMS**;
 
 Назначение:
 
-- демонстрация влияния межсимвольной интерференции (**ISI**);
-- исследование работы нелинейной эквализации;
+* демонстрация влияния межсимвольной интерференции (**ISI**);
+* исследование работы нелинейной эквализации;
+
+## Requirements
+
+Python 3.10+
+
+### Основные библиотеки
+
+* numpy
+* scipy
+* matplotlib
+* scikit-commpy
+
+### Параллельное вычисление
+
+* concurrent.futures (standard library)
+
+### Jupyter notebooks
+
+* notebook / jupyterlab
+
+### Установка
+
+```bash
+pip install -r requirements.txt
+```
+
