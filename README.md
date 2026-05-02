@@ -31,6 +31,7 @@
 ├── DFE_LMS.ipynb
 ├── DFE.ipynb
 ├── main.py
+├── requirements.txt
 ├── verif.py
 ├── optimal_decision_ber_analysis_parallel.py
 ├── ber_multithreaded_computing.py
@@ -162,7 +163,7 @@ Python 3.10+
 
 ### Параллельное вычисление
 
-* concurrent.futures (standard library)
+* concurrent.futures (стандартная библиотека)
 
 ### Jupyter notebooks
 
