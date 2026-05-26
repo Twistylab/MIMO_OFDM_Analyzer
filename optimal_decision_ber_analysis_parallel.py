@@ -475,7 +475,7 @@ class DataProcessing(OFDMMIMOTransceiver, QAMModemAdapter):
             ValueError: Все виды помечены как False.
         """
         if not (hard_decision or fec_hard_decision or fec_soft_decision):
-            raise ValueError('AВсе виды помечены как False.')
+            raise ValueError('Все виды помечены как False.')
 
         if hard_decision or fec_hard_decision:
             output_vector_of_bits_hard = np.vstack(
