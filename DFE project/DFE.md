@@ -134,7 +134,7 @@ $$
 Найдём $n$-ую ($n \leq D-1$) производную функции стоимости $J$:
 
 $$
-\frac{\partial J}{\partial w_n^{ff}} = 2\sum_{\begin{gathered}i=n \\ i \neq D-1\end{gathered}}^{K_1-1}\left(\sum_{m=0}^iw_m^{ff}h_{i-m}\right)h_{i-n} + 2(1-\sum_{m=0}^{D-1}w_m^{ff}h_{D-1-m})(-h_{D-1-n}) + 2\sigma^2_nw_n^{ff} = 0
+\frac{\partial J}{\partial w_n^{ff}} = 2\sum_{\begin{gathered}i=n \\ i \neq D-1\end{gathered}}^{K_1-1}\left(\sum_{m=0}^iw_m^{ff}h_{i-m}\right)h_{i-n} + 2\left(1-\sum_{m=0}^{D-1}w_m^{ff}h_{D-1-m}\right)(-h_{D-1-n}) + 2\sigma^2_nw_n^{ff} = 0
 $$
 
 Раскрыв скобки, получаем:
