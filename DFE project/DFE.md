@@ -128,7 +128,7 @@ $$
 С учётом нормировки исходных символов: $\sigma^2_I = 1$:
 
 $$
-J = \sum_{\begin{gathered}i=0 \\ i \neq D-1\end{gathered}}^{K_1-1}\left|\sum_{m=0}^iw_m^{ff}h_{i-m}\right|^2 + |1-\sum_{m=0}^{D-1}w_m^{ff}h_{D-1-m}|^2 + \sigma^2_n\sum_{i=0}^{K_1-1}|w_i^{ff}|^2
+J = \sum_{\begin{gather}i=0 \\ i \neq D-1\end{gather}}^{K_1-1}\left|\sum_{m=0}^iw_m^{ff}h_{i-m}\right|^2 + |1-\sum_{m=0}^{D-1}w_m^{ff}h_{D-1-m}|^2 + \sigma^2_n\sum_{i=0}^{K_1-1}|w_i^{ff}|^2
 $$
 
 Найдём $n$-ую ($n \leq D-1$) производную функции стоимости $J$:
