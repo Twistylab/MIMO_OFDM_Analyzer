@@ -128,25 +128,25 @@ $$
 С учётом нормировки исходных символов: $\sigma^2_I = 1$:
 
 $$
-J = \sum_{\begin{gathered}i=0 \\ i \neq D-1\end{gathered}}^{K_1-1}|\sum_{m=0}^iw_m^{ff}h_{i-m}|^2 + |1-\sum_{m=0}^{D-1}w_m^{ff}h_{D-1-m}|^2 + \sigma^2_n\sum_{i=0}^{K_1-1}|w_i^{ff}|^2
+J = \sum_{\begin{gathered}i=0 \\ i \neq D-1\end{gathered}}^{K_1-1}\left|\sum_{m=0}^iw_m^{ff}h_{i-m}\right|^2 + |1-\sum_{m=0}^{D-1}w_m^{ff}h_{D-1-m}|^2 + \sigma^2_n\sum_{i=0}^{K_1-1}|w_i^{ff}|^2
 $$
 
 Найдём $n$-ую ($n \leq D-1$) производную функции стоимости $J$:
 
 $$
-\frac{\partial J}{\partial w_n^{ff}} = 2\sum_{\begin{gathered}i=n \\ i \neq D-1\end{gathered}}^{K_1-1}(\sum_{m=0}^iw_m^{ff}h_{i-m})h_{i-n} + 2(1-\sum_{m=0}^{D-1}w_m^{ff}h_{D-1-m})(-h_{D-1-n}) + 2\sigma^2_nw_n^{ff} = 0
+\frac{\partial J}{\partial w_n^{ff}} = 2\sum_{\begin{gathered}i=n \\ i \neq D-1\end{gathered}}^{K_1-1}\left(\sum_{m=0}^iw_m^{ff}h_{i-m}\right)h_{i-n} + 2(1-\sum_{m=0}^{D-1}w_m^{ff}h_{D-1-m})(-h_{D-1-n}) + 2\sigma^2_nw_n^{ff} = 0
 $$
 
 Раскрыв скобки, получаем:
 
 $$
-\sum_{\begin{gathered}i=n \\ i \neq D-1\end{gathered}}^{K_1-1}(\sum_{m=0}^iw_m^{ff}h_{i-m})h_{i-n} + h_{D-1-n}\sum_{m=0}^{D-1}w_m^{ff}h_{D-1-m} + \sigma^2_nw_n^{ff} = h_{D-1-n}
+\sum_{\begin{gathered}i=n \\ i \neq D-1\end{gathered}}^{K_1-1}\left(\sum_{m=0}^iw_m^{ff}h_{i-m}\right)h_{i-n} + h_{D-1-n}\sum_{m=0}^{D-1}w_m^{ff}h_{D-1-m} + \sigma^2_nw_n^{ff} = h_{D-1-n}
 $$
 
 Объединяя обе суммы:
 
 $$
-\sum_{i=n}^{K_1-1}(\sum_{m=0}^iw_m^{ff}h_{i-m})h_{i-n} + \sigma^2_nw_n^{ff} = h_{D-1-n}
+\sum_{i=n}^{K_1-1}\left(\sum_{m=0}^iw_m^{ff}h_{i-m}\right)h_{i-n} + \sigma^2_nw_n^{ff} = h_{D-1-n}
 $$
 
 Данное выражение мы бы получили и при производной $n > D-1$, но левая часть приравнивалась бы к нулю. В любом случае, в начале мы определили, что все члены с отрицательными индексами равны нулю, поэтому
@@ -156,7 +156,7 @@ $$
 
 $$
 \begin{aligned}
-\sum_{i=n}^{K_1-1}(\sum_{m=0}^iw_m^{ff}h_{i-m})h_{i-n} &=\sum_{m=0}^nw_m^{ff}h_{n-m}h_0 \\
+\sum_{i=n}^{K_1-1}\left(\sum_{m=0}^iw_m^{ff}h_{i-m}\right)h_{i-n} &=\sum_{m=0}^nw_m^{ff}h_{n-m}h_0 \\
 &+\sum_{m=0}^nw_m^{ff}h_{n+1-m}h_1 + w_{n+1}^{ff}h_0h_1 +\\
 &+\sum_{m=0}^nw_m^{ff}h_{n+2-m}h_2 + w_{n+1}^{ff}h_1h_2 + w_{n+2}^{ff}h_0h_2 +\\
 & \ldots \\
@@ -246,16 +246,11 @@ $$
 
 С учётом прошлый размышлений, полную информацию о канале на $y_k$ пришедшем символе будет нести символ $I_{k - (L-1)}$, откуда можно получить оптимальную задержку определения символа $D=L$. Также из прошлых размышлений следует $D=L=K_1=K_2+1$.
 
-Для анализа работы эквалайзера с обратной связью по решению определим веса линейных эквалайзеров Zero-Forcing:
+При помощи метрики **BER** сравним работу **DFE** и линейного эквалайзера **ZF** (Zero-Forcing).
+Для этого определим его веса:
 
 $$
-y_k = \sum_{i=0}^{(K_1-1) + (L-1)}I_{k-i}\sum_{l=0}^i w_lh_{i-l} + \sum_{i=0}^{K_1-1}w^{ff}_i \cdot n_{k-i}
-$$
-
-В случае ZF-эквалайзера:
-
-$$
-\sum_{i=0}^{(K_1-1) + (L-1)}I_{k-i}\sum_{l=0}^i w_lh_{i-l} = I_k \quad \Longleftrightarrow \quad \mathbf{H} \cdot \vec{w}^{zf} = \vec{\delta}; \quad \vec{\delta} = \left(1, 0, \ldots, 0\right)^T;
+\sum_{i=0}^{(K_1-1) + (L-1)}I_{k-i}\sum_{l=0}^i w^{zf}_lh_{i-l} = I_k \quad \Longleftrightarrow \quad \mathbf{H} \cdot \vec{w}^{zf} = \vec{\delta}; \quad \vec{\delta} = \left(1, 0, \ldots, 0\right)^T;
 $$
 
 Получаем следующий результат:
