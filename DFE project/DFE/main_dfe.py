@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from multithreaded_computing_part import compute_ber_multiprocessing
+from multithreaded_computing_part_dfe import compute_ber_multiprocessing
 
 if __name__ == '__main__':
     decision_methods = {
@@ -34,6 +34,11 @@ if __name__ == '__main__':
         ber_without_fec_arr.append(ber_results['ber_dfe_hard'])
         ber_with_fec_hard_arr.append(ber_results['ber_dfe_fec_hard'])
         ber_with_fec_soft_arr.append(ber_results['ber_dfe_fec_soft'])
+
+    np.save('results/ber_dfe_without_fec_arr', ber_without_fec_arr)
+    np.save('results/ber_dfe_with_fec_hard_arr', ber_with_fec_hard_arr)
+    np.save('results/ber_dfe_with_fec_soft_arr', ber_with_fec_soft_arr)
+    np.save('results/snr', SNR_arr)
 
     fig = plt.figure(figsize=(10, 10))
     ax = fig.add_subplot(111)

@@ -8,7 +8,7 @@ _trellis = Trellis(np.array([7]), np.array([[0o133, 0o171]]))
 
 
 def generate_impulse_response(impulse_response_length):
-    return 10 ** (-np.linspace(0, 10, impulse_response_length) / 10)
+    return 10 ** (-np.linspace(0, 10, impulse_response_length) / 20)
 
 def convolutional_matrix(impulse_response):
     impulse_response_length = len(impulse_response)
@@ -21,29 +21,27 @@ def convolutional_matrix(impulse_response):
     return conv_matrix
 
 
-class BERAnalyzerWithDFE(cp.QAMModem):
-    def __init__(self, modulation_size, bits_number, noise_variance, impulse_response_length, delay,
-                 use_dfe_hard=False, use_dfe_fec_hard=False, use_dfe_fec_soft=False):
+class BERAnalyzerWithZF(cp.QAMModem):
+    def __init__(self, modulation_size, bits_number, noise_variance, impulse_response_length,
+                 use_zf_hard=False, use_zf_fec_hard=False, use_zf_fec_soft=False):
 
         super().__init__(modulation_size)
 
         self.modulation_size = modulation_size
 
-        self.use_dfe_hard, self.use_dfe_fec_hard, self.use_dfe_fec_soft = use_dfe_hard, use_dfe_fec_hard, use_dfe_fec_soft
+        self.use_zf_hard, self.use_zf_fec_hard, self.use_zf_fec_soft = use_zf_hard, use_zf_fec_hard, use_zf_fec_soft
 
-        if not (use_dfe_hard or use_dfe_fec_hard or use_dfe_fec_soft):
+        if not (use_zf_hard or use_zf_fec_hard or use_zf_fec_soft):
             raise ValueError("All methods is False. Nothing to do...")
 
         self.impulse_response_length = impulse_response_length
-        self.delay = delay
         self.impulse_response = generate_impulse_response(self.impulse_response_length)
 
         self.noise_variance = noise_variance
         self.bits_number = bits_number
 
-        self.weights_feedforward = None
-        self.weights_feedback = None
-        self.weights_dfe()
+        self.weights = None
+        self.weights_zf()
 
         self.input_bits = None
         self.input_bits_enc = None
@@ -53,7 +51,6 @@ class BERAnalyzerWithDFE(cp.QAMModem):
         self.output_bits_enc = None
         self.output_signal = None
 
-        self.detected_symbols = None
         self.equalized_signal = None
 
         self.evm = []
@@ -62,50 +59,35 @@ class BERAnalyzerWithDFE(cp.QAMModem):
         self._count_ber = 0
         self._count_data = 0
 
-    def weights_dfe(self):
+    def weights_zf(self):
         conv_matrix = convolutional_matrix(self.impulse_response)
-        autocorrelation_matrix = conv_matrix.T @ conv_matrix
 
-        self.weights_feedforward = np.linalg.inv(
-            autocorrelation_matrix + self.noise_variance * np.eye(self.impulse_response_length)) @ np.flip(
-            self.impulse_response)
+        delta = np.zeros(self.impulse_response_length)
+        delta[0] = 1
 
-        self.weights_feedback = convolutional_matrix(np.flip(self.impulse_response[1:])).T @ self.weights_feedforward[
-            1:]
+        self.weights = np.linalg.inv(conv_matrix) @ delta
 
     def apply_multipath_propagation(self):
         length_clear_signal = len(self.input_signal)
-        length_isi_signal = length_clear_signal + self.impulse_response_length - 1
+        length_isi_signal = length_clear_signal
         self.output_signal = np.zeros(length_isi_signal, dtype=complex)
         for k in range(length_isi_signal):
             for i in range(self.impulse_response_length):
                 # Свёртка с ИХ канала
-                if 0 <= k - i <= length_clear_signal - 1:
+                if 0 <= k - i:
                     self.output_signal[k] += self.impulse_response[i] * self.input_signal[k - i]
+                else:
+                    break
             # Добавление шума
             self.output_signal[k] += (np.random.randn() + 1j * np.random.randn()) * np.sqrt(self.noise_variance / 2)
 
-    def apply_dfe_equalizer(self):
+    def apply_mmse_equalizer(self):
         length_isi_signal = len(self.output_signal)
-        length_clear_signal = length_isi_signal - self.impulse_response_length + 1
-        feedforward_signal = np.zeros(length_isi_signal, dtype=complex)
+        self.equalized_signal = np.zeros(length_isi_signal, dtype=complex)
         for k in range(length_isi_signal):
             for i in range(self.impulse_response_length):
                 if k - i >= 0:
-                    feedforward_signal[k] += self.weights_feedforward[i] * self.output_signal[k - i]
-
-        self.detected_symbols = np.zeros(length_clear_signal, dtype=complex)
-        self.equalized_signal = np.zeros(length_isi_signal, dtype=complex)
-        feedback_signal = np.zeros(length_isi_signal, dtype=complex)
-        for k in range(length_isi_signal):
-            for i in range(self.impulse_response_length - 1):
-                if k - i - self.delay >= 0:
-                    feedback_signal[k] += self.weights_feedback[i] * self.detected_symbols[k - i - self.delay]
-            self.equalized_signal[k] = feedforward_signal[k] - feedback_signal[k]
-            if k - self.delay + 1 >= 0:
-                self.detected_symbols[k - self.delay + 1] = \
-                self.modulate(self.demodulate([self.equalized_signal[k] * np.sqrt(self.Es)], demod_type='hard'))[
-                    0] / np.sqrt(self.Es)
+                    self.equalized_signal[k] += self.weights[i] * self.output_signal[k - i]
 
     def compute_log_likelihood_ratio(self, entire_signal):
         llr = []
@@ -157,7 +139,7 @@ class BERAnalyzerWithDFE(cp.QAMModem):
         return self._count_ber / self._count_data
 
     def compute_evm(self):
-        return np.sqrt(np.mean(np.abs((self.input_signal - self.equalized_signal[self.delay - 1:])) ** 2))
+        return np.sqrt(np.mean(np.abs((self.input_signal - self.equalized_signal)) ** 2))
 
     def generate_random_transmission(self):
         self.input_bits = np.random.randint(0, 2, self.bits_number)
@@ -168,16 +150,16 @@ class BERAnalyzerWithDFE(cp.QAMModem):
 
         self.apply_multipath_propagation()
 
-        self.apply_dfe_equalizer()
+        self.apply_mmse_equalizer()
 
-        if self.use_dfe_fec_hard:
-            self.output_bits_enc = self.demodulate(self.detected_symbols * np.sqrt(self.Es), demod_type='hard')
+        if self.use_zf_fec_hard:
+            self.output_bits_enc = self.demodulate(self.equalized_signal * np.sqrt(self.Es), demod_type='hard')
             self.output_bits = viterbi_decode(self.output_bits_enc, _trellis, decoding_type='hard')
-        elif self.use_dfe_fec_soft:
-            self.output_bits = viterbi_decode(self.compute_log_likelihood_ratio(self.equalized_signal[self.delay - 1:]), _trellis, decoding_type='soft')
-        elif self.use_dfe_hard:
+        elif self.use_zf_fec_soft:
+            self.output_bits = viterbi_decode(self.compute_log_likelihood_ratio(self.equalized_signal), _trellis, decoding_type='soft')
+        elif self.use_zf_hard:
             self.input_bits = self.input_bits_enc
-            self.output_bits = self.demodulate(self.detected_symbols * np.sqrt(self.Es), demod_type='hard')
+            self.output_bits = self.demodulate(self.equalized_signal * np.sqrt(self.Es), demod_type='hard')
 
         self.evm.append(self.compute_evm())
 
